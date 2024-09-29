@@ -19,7 +19,7 @@ namespace Opt {
   const int nTest_SignalEndcap      = 0;
   const int nTest_BackgroundEndcap  = 0;
 
-  const TString tagDir = "2019-08-23";
+  const TString tagDir = "2024-09-30-lt30";
 
   // Cut repository directory
   const TString cutRepositoryDir = "./cut_repository";
