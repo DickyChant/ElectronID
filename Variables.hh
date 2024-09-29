@@ -5,7 +5,7 @@
 
 namespace Vars {
 
-  const int nVariables = 6;
+  const int nVariables = 5;
   const int nSpectatorVariables = 5;
   const int nConstants = 3;
   
@@ -24,7 +24,7 @@ namespace Vars {
     new Variables("dEtaSeed"             ,"abs(dEtaSeed)"        ,'F',true),
     new Variables("dPhiIn"               ,"abs(dPhiIn)"          ,'F',true),
     new Variables("hOverE"               ,"hOverE"               ,'F',false),
-    new Variables("relIsoWithEA"         ,"relIsoWithEA"         ,'F',false),
+    // new Variables("relIsoWithEA"         ,"relIsoWithEA"         ,'F',false),
     new Variables("ooEmooP"              ,"ooEmooP"              ,'F',false)
   };
   
