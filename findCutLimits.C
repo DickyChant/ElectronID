@@ -13,7 +13,7 @@
 #include "VarCut.hh"
 
 // Define unique part of the file name for saving the cuts
-TString dateTag = "2019-08-23";
+TString dateTag = "2024-09-30-lt30";
 
 // Forward declarations
 void findVarLimits(TString var, bool isBarrel, float &xmin, float &xmax);
@@ -130,7 +130,7 @@ void findVarLimits(TString var, bool useBarrel, float &xlow, float &xhigh){
   else if ( var == "dEtaSeed"         )        xhigh = useBarrel ? 0.05 : 0.1;
   else if ( var == "dPhiIn"         )          xhigh = 0.4;
   else if ( var == "hOverE"         )          xhigh = useBarrel ? 0.5 : 1.0;
-  else if ( var == "relIsoWithEA")             xhigh = 2;
+//  else if ( var == "relIsoWithEA")             xhigh = 2;
   else if ( var == "ooEmooP"        )          xhigh = 0.5;
   else if ( var == "d0"             )          xhigh = useBarrel ? 0.2 : 0.4;
   else if ( var == "dz"             )          xhigh = 5;
