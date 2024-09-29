@@ -8,7 +8,7 @@
 void fourPointOptimization(bool useBarrel){
 
   // Define source for the initial cut range
-  TString dateTag = "2019-08-23";
+  TString dateTag = "2024-09-30-lt30";
   TString startingCutMaxFileName        = "cuts_barrel_eff_0999_" + dateTag + ".root";
   if(!useBarrel) startingCutMaxFileName = "cuts_endcap_eff_0999_" + dateTag + ".root";
 
