@@ -10,7 +10,7 @@
 
 const TCut trueEleCut       = "isTrue == 1";
 const TCut fakeEleCut       = "isTrue == 0 || isTrue == 3";
-const TCut preselectionCuts = "passConversionVeto && abs(dz)<1";
+const TCut preselectionCuts = "passConversionVeto && abs(dz)<1 && cent <= 30";
 
 const float etaMin = -2.5;
 const float etaMax = +2.5;
@@ -27,7 +27,8 @@ const bool smallEventCount = false;
 const int smallMaxEvents = 100000;
 
 const TString getFileName(TString type){
-  return "/user/tomc/eleIdTuning/tuples/" + type + ".root";
+  return "/eos/cms/store/cmst3/group/hintt/sqian/132x_v1_addcent/" + type  + "/output.root";
+  //return "/user/tomc/eleIdTuning/tuples/" + type + ".root";
 }
 // Tree Name (file IN):
 const TString treeName = "ntupler/ElectronTree";
@@ -127,5 +128,5 @@ TTree *getTree(TString fname, TString tname){
 // Compiled
 int main(int argc, char *argv[]){
   gROOT->SetBatch();
-  computeKinematicWeights("2019-08-23");
+  computeKinematicWeights("2024-09-30-lt30");
 }

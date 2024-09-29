@@ -37,9 +37,10 @@ const float C_e_endcap   = 2.35;
 const float C_rho_endcap = 0.201;
 
 
-const TString tagDir = "2019-08-23";
+const TString tagDir = "2024-09-30-lt30";
 const TString getFileName(TString type){
-  return "/user/tomc/eleIdTuning/tuples/" + type + ".root";
+  return "/eos/cms/store/cmst3/group/hintt/sqian/132x_v1_addcent/" + type + "/output.root";
+  // return "/user/tomc/eleIdTuning/tuples/" + type + ".root";
 }
 
 // Preselection cuts: must match or be looser than
@@ -88,7 +89,7 @@ void bazinga (std::string mes){
 
 // Forward declarations
 float   findKinematicWeight(TH2D *hist, float pt, float etaSC);
-bool    passPreselection(int isTrue, float pt, float eta, int passConversionVeto, float dz, MatchType matchType, EtaRegion etaRegion);
+bool    passPreselection(int isTrue, float pt, float eta, int passConversionVeto, float dz, MatchType matchType, EtaRegion etaRegion, float cent);
 TString eventCountString();
 void    drawProgressBar(float progress);
 
@@ -209,6 +210,8 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   // Conversion rejection
   std::vector <int> *eleExpectedMissingInnerHits = 0;
   std::vector <int> *electronPassConversionVeto = 0;
+  // HI variables
+  std::vector <float> *electronCent = 0;
 
   // Declare branches
   TBranch *b_eleNEle = 0;
@@ -235,6 +238,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   TBranch *b_eleOOEMOOP = 0;
   TBranch *b_eleExpectedMissingInnerHits = 0;
   TBranch *b_electronPassConversionVeto = 0;
+  TBranch *b_electronCent = 0;
 
   // Connect variables and branches to the tree with the data
   treeIn->SetBranchAddress("nEle",                     &eleNEle,                     &b_eleNEle);
@@ -259,6 +263,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   treeIn->SetBranchAddress("ooEmooP",                  &eleOOEMOOP,                  &b_eleOOEMOOP);
   treeIn->SetBranchAddress("expectedMissingInnerHits", &eleExpectedMissingInnerHits, &b_eleExpectedMissingInnerHits);
   treeIn->SetBranchAddress("passConversionVeto",       &electronPassConversionVeto,  &b_electronPassConversionVeto);
+  treeIn->SetBranchAddress("cent",       &electronCent,  &b_electronCent);
 
 
   //
@@ -310,6 +315,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   Float_t dz_= 0.0;
   Int_t   expectedMissingInnerHits_= 0;
   Int_t   passConversionVeto_= 0;
+  Float_t cent_= -1.0;
   Int_t   isTrueEle_= 0;
 
   treeOut->Branch("nPV",                      &nPV_,                      "nPV/I");
@@ -333,6 +339,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   treeOut->Branch("dz",                       &dz_,                       "dz/F");
   treeOut->Branch("expectedMissingInnerHits", &expectedMissingInnerHits_, "expectedMissingInnerHits/I");
   treeOut->Branch("passConversionVeto",       &passConversionVeto_,       "passConversionVeto/I");
+  treeOut->Branch("cent",                       &cent_,                       "cent/F");
   treeOut->Branch("isTrueEle",                &isTrueEle_,                "isTrueEle/I");
 
   //
@@ -377,6 +384,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
     b_eleOOEMOOP->GetEntry(tentry);
     b_eleExpectedMissingInnerHits->GetEntry(tentry);
     b_electronPassConversionVeto->GetEntry(tentry);
+    b_electronCent->GetEntry(tentry);
 
     // Loop over the electrons
     for(int iele = 0; iele < eleNEle; iele++){
@@ -408,6 +416,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
       nPV_                      = nPV;
       ooEmooP_                  = eleOOEMOOP->at(iele);
       passConversionVeto_       = electronPassConversionVeto->at(iele);
+      cent_       = electronCent->at(iele);
       isTrueEle_                = eleIsTrueElectron->at(iele);
 
       // Compute isolation with effective area correction for PU
@@ -416,7 +425,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
       while(etaBin < EffectiveAreas::nEtaBins-1 && abs(etaSC_) > EffectiveAreas::etaBinLimits[etaBin+1]) ++etaBin;
       double area = EffectiveAreas::effectiveAreaValues[etaBin];
       relIsoWithEA_ = (isoChargedHadrons_ + std::max(0.0, isoNeutralHadrons_+isoPhotons_-eleRho*area))/pt_;
-      if(!passPreselection(isTrueEle_, pt_, etaSC_, passConversionVeto_, dz_, matchType, etaRegion)) continue;
+      if(!passPreselection(isTrueEle_, pt_, etaSC_, passConversionVeto_, dz_, matchType, etaRegion, cent_)) continue;
       treeOut->Fill();// IK will kill me next time, if this line is not at the right place!
     } // end loop over the electrons
   } // end loop over SIGNAL events
@@ -462,7 +471,7 @@ float findKinematicWeight(TH2D *hist, float pt, float etaSC){
   return weight;
 }
 
-bool passPreselection(int isTrue, float pt, float eta, int passConversionVeto, float dz, MatchType matchType, EtaRegion etaRegion){
+bool passPreselection(int isTrue, float pt, float eta, int passConversionVeto, float dz, MatchType matchType, EtaRegion etaRegion, float cent){
   if(matchType == MATCH_TRUE and !(isTrue==1))                                      return false;
   if(matchType == MATCH_FAKE and !(isTrue==0 || isTrue==3))                         return false;
   if(etaRegion == ETA_EB     and !(abs(eta) <= boundaryEBEE))                       return false;
@@ -471,6 +480,7 @@ bool passPreselection(int isTrue, float pt, float eta, int passConversionVeto, f
   if(pt < ptMin)                                                                    return false;
   if(!passConversionVeto)                                                           return false;
   if(!(abs(dz) < dzMax))                                                            return false;
+  if (cent > 30) return false; 
   return true;
 }
 
