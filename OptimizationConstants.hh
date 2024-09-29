@@ -64,7 +64,7 @@ namespace Opt {
   const TCut etaCutEndcap = " abs(etaSC) > 1.566 && abs(etaSC)<2.5" ;
   
   // Anything else
-  const TCut otherPreselectionCuts = "passConversionVeto && abs(dz)<1";
+  const TCut otherPreselectionCuts = "passConversionVeto && abs(dz)<1 && cent <= 30";
 }
 
 #endif
