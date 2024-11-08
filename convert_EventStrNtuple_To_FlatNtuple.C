@@ -39,7 +39,7 @@ const float C_rho_endcap = 0.201;
 
 const TString tagDir = "2024-09-30-lt30";
 const TString getFileName(TString type){
-  return "/eos/cms/store/cmst3/group/hintt/sqian/132x_v1_addcent/" + type + "/output.root";
+  return "/eos/cms/store/cmst3/group/hintt/sqian/132x_v2_correctHoverE/" + type + "/output.root";
   // return "/user/tomc/eleIdTuning/tuples/" + type + ".root";
 }
 
@@ -205,7 +205,8 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   std::vector <float> *eleDPhiIn = 0;  // deltaPhiIn
   // Misc ID variables
   std::vector <float> *eleHoverE = 0;  // H/E
-  std::vector <float> *eleFull5x5SigmaIEtaIEta = 0;
+  std::vector <float> *eleFull5x5HoverE = 0;  // full5x5 H/E
+  std::vector <float> *eleFull5x5SigmaIEtaIEta = 0; // full5x5 sigmaIetaIeta
   std::vector <float> *eleOOEMOOP = 0; // |1/E - 1/p|
   // Conversion rejection
   std::vector <int> *eleExpectedMissingInnerHits = 0;
@@ -234,6 +235,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   TBranch *b_eleDEtaSeed = 0;
   TBranch *b_eleDPhiIn = 0;
   TBranch *b_eleHoverE = 0;
+  TBranch *b_eleFull5x5HoverE = 0;
   TBranch *b_eleFull5x5SigmaIEtaIEta = 0;
   TBranch *b_eleOOEMOOP = 0;
   TBranch *b_eleExpectedMissingInnerHits = 0;
@@ -259,6 +261,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   treeIn->SetBranchAddress("dEtaSeed",                 &eleDEtaSeed,                 &b_eleDEtaSeed);
   treeIn->SetBranchAddress("dPhiIn",                   &eleDPhiIn,                   &b_eleDPhiIn);
   treeIn->SetBranchAddress("hOverE",                   &eleHoverE,                   &b_eleHoverE);
+  treeIn->SetBranchAddress("full5x5_hOverE",             &eleFull5x5HoverE,             &b_eleFull5x5HoverE);
   treeIn->SetBranchAddress("full5x5_sigmaIetaIeta",    &eleFull5x5SigmaIEtaIEta,     &b_eleFull5x5SigmaIEtaIEta);
   treeIn->SetBranchAddress("ooEmooP",                  &eleOOEMOOP,                  &b_eleOOEMOOP);
   treeIn->SetBranchAddress("expectedMissingInnerHits", &eleExpectedMissingInnerHits, &b_eleExpectedMissingInnerHits);
@@ -302,7 +305,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   Float_t dEtaSeed_= 0.0;
   Float_t dPhiIn_= 0.0;
   Float_t hOverE_= 0.0;
-  Float_t hOverEscaled_= 0.0;
+  Float_t full5x5_hOverE_= 0.0;
   Float_t full5x5_sigmaIetaIeta_= 0.0;
   Float_t isoChargedHadrons_= 0.0;
   Float_t isoNeutralHadrons_= 0.0;
@@ -331,7 +334,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   treeOut->Branch("dEtaSeed",                 &dEtaSeed_,                 "dEtaSeed/F");
   treeOut->Branch("dPhiIn",                   &dPhiIn_,                   "dPhiIn/F");
   treeOut->Branch("hOverE",                   &hOverE_,                   "hOverE/F");
-  treeOut->Branch("hOverEscaled",             &hOverEscaled_,             "hOverEscaled/F");
+  treeOut->Branch("full5x5_hOverE",             &full5x5_hOverE_,             "full5x5_hOverE/F");
   treeOut->Branch("full5x5_sigmaIetaIeta",    &full5x5_sigmaIetaIeta_,    "full5x5_sigmaIetaIeta/F");
   treeOut->Branch("relIsoWithEA",             &relIsoWithEA_,             "relIsoWithEA/F");
   treeOut->Branch("ooEmooP",                  &ooEmooP_,                  "ooEmooP/F");
@@ -347,7 +350,6 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
   //
   UInt_t maxEvents = treeIn->GetEntries();
   UInt_t maxEventsOver10000 =   maxEvents/10000.;
-
   if(smallEventCount and maxEventsSmall < maxEvents) maxEvents = maxEventsSmall;
 
   printf("\nStart processing events, will run on %u events\n", maxEvents );
@@ -380,6 +382,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
     b_eleDEtaSeed->GetEntry(tentry);
     b_eleDPhiIn->GetEntry(tentry);
     b_eleHoverE->GetEntry(tentry);
+    b_eleFull5x5HoverE->GetEntry(tentry);
     b_eleFull5x5SigmaIEtaIEta->GetEntry(tentry);
     b_eleOOEMOOP->GetEntry(tentry);
     b_eleExpectedMissingInnerHits->GetEntry(tentry);
@@ -406,7 +409,7 @@ void convert_EventStrNtuple_To_FlatNtuple(SampleType sample, MatchType matchType
       dPhiIn_                   = eleDPhiIn->at(iele);
       full5x5_sigmaIetaIeta_    = eleFull5x5SigmaIEtaIEta->at(iele);
       hOverE_                   = eleHoverE->at(iele);
-      hOverEscaled_             = hOverE_ - C_e/eSC_ - C_rho*eleRho/eSC_;
+      full5x5_hOverE_           = eleFull5x5HoverE->at(iele);
       d0_                       = eleD0->at(iele);
       dz_                       = eleDZ->at(iele);
       isoChargedHadrons_        = isoChargedHadrons->at(iele);

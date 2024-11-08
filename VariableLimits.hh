@@ -19,7 +19,7 @@ namespace VarLims{
     new VariableLimits("full5x5_sigmaIetaIeta"   ,1e30),
     new VariableLimits("dEtaSeed"                ,1e30),
     new VariableLimits("dPhiIn"                  ,1e30),
-    new VariableLimits("hOverE"                  ,1e30),
+    new VariableLimits("full5x5_hOverE"          ,1e30),
     new VariableLimits("relIsoWithEA"            ,1e30),
     new VariableLimits("ooEmooP"                 ,1e30)
     //new VariableLimits("d0"                      ,1e30), // Removed from optimization

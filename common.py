@@ -80,10 +80,10 @@ workingPoints = {
                   workingPoint('Medium (94X)',             'cuts_region_2018-03-18_retuned_WP5_Medium', 1, 1),
                   workingPoint('Tight (94X)',              'cuts_region_2018-03-18_retuned_WP5_Tight',  1, 1)],
 
-  'training106': [workingPoint('Veto (106X)',               'cuts_region_2019-08-23_WP_Veto',           2, 3),
-                  workingPoint('Loose (106X)',              'cuts_region_2019-08-23_WP_Loose',          1, 1),
-                  workingPoint('Medium (106X)',             'cuts_region_2019-08-23_WP_Medium',         1, 1),
-                  workingPoint('Tight (106X)',              'cuts_region_2019-08-23_WP_Tight',          1, 1)],
+  'training106': [workingPoint('Veto (132X PbPb)',               'cuts_region_2024-09-30-lt30_WP_Veto',           2, 3),
+                  workingPoint('Loose (132X PbPb)',              'cuts_region_2024-09-30-lt30_WP_Loose',          1, 1),
+                  workingPoint('Medium (132X PbPb)',             'cuts_region_2024-09-30-lt30_WP_Medium',         1, 1),
+                  workingPoint('Tight (132X PbPb)',              'cuts_region_2024-09-30-lt30_WP_Tight',          1, 1)],
 }
 
 from itertools import chain

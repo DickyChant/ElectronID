@@ -1,10 +1,10 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import ROOT
 from common import loadClasses, getTreeFromFile
 loadClasses('OptimizationConstants.hh')
 
-dateTag = "2019-08-23"
+dateTag = "2024-09-30-lt30"
 
 
 def drawKinematics(var):

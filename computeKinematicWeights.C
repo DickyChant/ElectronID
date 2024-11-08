@@ -27,7 +27,7 @@ const bool smallEventCount = false;
 const int smallMaxEvents = 100000;
 
 const TString getFileName(TString type){
-  return "/eos/cms/store/cmst3/group/hintt/sqian/132x_v1_addcent/" + type  + "/output.root";
+  return "/eos/cms/store/cmst3/group/hintt/sqian/132x_v2_correctHoverE/" + type  + "/output.root";
   //return "/user/tomc/eleIdTuning/tuples/" + type + ".root";
 }
 // Tree Name (file IN):

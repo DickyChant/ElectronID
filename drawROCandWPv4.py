@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import ROOT,os
 from common import loadClasses, workingPoints, getTreeFromFile, drawFromTree, makeSubDirs, setColors
@@ -12,7 +12,7 @@ def tmvaFileName(wp, region, tag):
   if   tag=='default':     name = 'training_results_' + region + '_' + wpPass + '_2017-11-07'
   elif tag=='retuneMVA':   name = 'training_results_' + region + '_' + wpPass + '_2017-11-16'
   elif tag=='training94':  name = 'training_results_' + region + '_' + wpPass + '_2018-03-18'
-  elif tag=='training106': name = 'training_results_' + region + '_' + wpPass + '_2019-08-23'
+  elif tag=='training106': name = 'training_results_' + region + '_' + wpPass + '_2024-09-30-lt30'
   return './trainingData/' + name + '/TMVA_' + name + '.root'
 
 def findEfficiencies(signalTree, backgroundTree, cuts, wp, barrel, missingHits):
